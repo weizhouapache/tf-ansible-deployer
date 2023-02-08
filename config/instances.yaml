@@ -8,6 +8,7 @@ instances:
   mgmt:
     provider: bms
     ip: 10.0.34.239
+    physical_interface_ip:
     roles:
       config_database:
       config:
@@ -18,6 +19,7 @@ instances:
   kvm1:
     provider: bms
     ip: 10.0.35.177
+    physical_interface_ip:
     roles:
       vrouter:
   kvm2:
@@ -28,6 +30,7 @@ instances:
   kvm3:
     provider: bms
     ip: 10.0.35.196
+    physical_interface_ip:
     roles:
       vrouter:
 global_configuration:
@@ -37,4 +40,5 @@ contrail_configuration:
   DATABASE_NODEMGR__DEFAULTS__minimum_diskGB: 2
   CONFIG_DATABASE_NODEMGR__DEFAULTS__minimum_diskGB: 2
   UPGRADE_KERNEL: true
+  PHYSICAL_INTERFACE: eth1
 ansible_os_family: "RedHat"

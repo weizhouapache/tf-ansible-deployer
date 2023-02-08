@@ -3,3 +3,20 @@
   selinux:
     policy: targeted
     state: permissive
+
+- name: configure static IP on physical interface on CentOS 7
+  lineinfile:
+    dest: /etc/sysconfig/network-scripts/ifcfg-{{ contrail_configuration.PHYSICAL_INTERFACE }}
+    regex: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    state: present
+  with_items:
+    - { regexp: "BOOTPROTO=", line: "BOOTPROTO=static" }
+    - { regexp: "IPADDR=", line: "IPADDR={{ hostvars[inventory_hostname].instance_data.physical_interface_ip }}" }
+    - { regexp: "NETMASK=", line: "NETMASK=255.255.255.0" }
+  when: ansible_os_family == 'RedHat' and
+        ansible_distribution_major_version|int == 7 and
+        hostvars[inventory_hostname].instance_data.physical_interface_ip is defined and
+        hostvars[inventory_hostname].instance_data.physical_interface_ip and
+        contrail_configuration.PHYSICAL_INTERFACE is defined and
+        contrail_configuration.PHYSICAL_INTERFACE
