@@ -4,9 +4,24 @@
     policy: targeted
     state: permissive
 
+- name: Set physical interface to specified interface
+  set_fact: physical_interface="{{ hostvars[inventory_hostname].instance_data.physical_interface }}"
+  when: ansible_os_family == 'RedHat' and
+        ansible_distribution_major_version|int == 7 and
+        hostvars[inventory_hostname].instance_data.physical_interface is defined and
+        hostvars[inventory_hostname].instance_data.physical_interface
+
+- name: Set physical interface to contrail_configuration.PHYSICAL_INTERFACE
+  set_fact: physical_interface="{{ contrail_configuration.PHYSICAL_INTERFACE }}"
+  when: ansible_os_family == 'RedHat' and
+        ansible_distribution_major_version|int == 7 and
+        physical_interface is not defined and
+        contrail_configuration.PHYSICAL_INTERFACE is defined and
+        contrail_configuration.PHYSICAL_INTERFACE
+
 - name: configure static IP on physical interface on CentOS 7
   lineinfile:
-    dest: /etc/sysconfig/network-scripts/ifcfg-{{ contrail_configuration.PHYSICAL_INTERFACE }}
+    dest: /etc/sysconfig/network-scripts/ifcfg-{{ physical_interface }}
     regex: "{{ item.regexp }}"
     line: "{{ item.line }}"
     state: present
@@ -16,7 +31,7 @@
     - { regexp: "NETMASK=", line: "NETMASK=255.255.255.0" }
   when: ansible_os_family == 'RedHat' and
         ansible_distribution_major_version|int == 7 and
+        'physical_interface_ip' in hostvars[inventory_hostname].instance_data and
         hostvars[inventory_hostname].instance_data.physical_interface_ip is defined and
         hostvars[inventory_hostname].instance_data.physical_interface_ip and
-        contrail_configuration.PHYSICAL_INTERFACE is defined and
-        contrail_configuration.PHYSICAL_INTERFACE
+        physical_interface is defined
