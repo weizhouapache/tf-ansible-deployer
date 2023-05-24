@@ -18,7 +18,7 @@
 
 - name: install docker
   yum:
-    name: "{{ item }}"
+    name: docker-ce
   register: res
   retries: 5
   until: res is success
