@@ -1,12 +1,12 @@
 ---
-- name: create docker repo
-  yum_repository:
-    name: dockerrepo
-    description: Docker Repository
-    baseurl: https://download.docker.com/linux/centos/docker-ce.repo
-    gpgkey: https://download.docker.com/linux/centos/gpg
-    gpgcheck: yes
-  when: docker_mirror_url is not defined
+- name: Install yum-utils
+  yum:
+     name: yum-utils
+     state: present
+
+- name: Add Docker repo
+  command:
+     cmd: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
 - name: configure docker mirror
   yum_repository:
